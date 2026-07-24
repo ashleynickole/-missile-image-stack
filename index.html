@@ -220,12 +220,12 @@
       });
     }
 
-    function onPointerDown(event) {
+    function onPointerDown(event, card) {
       const topCard = state.cards[0];
 
       if (
         state.animating ||
-        event.currentTarget !== topCard ||
+        card !== topCard ||
         !event.isPrimary
       ) {
         return;
@@ -327,17 +327,16 @@
 
         window.requestAnimationFrame(() => {
           state.animating = false;
-          state.cards[0].focus({ preventScroll: true });
         });
       }, 370);
     }
 
-    function onKeyDown(event) {
-      if (event.currentTarget !== state.cards[0] || state.animating) return;
+    function onKeyDown(event, card) {
+      if (card !== state.cards[0] || state.animating) return;
 
       if (event.key === "ArrowLeft") {
         event.preventDefault();
-        sendTopCardToBack(event.currentTarget, -1);
+        sendTopCardToBack(card, -1);
       }
 
       if (
@@ -346,13 +345,13 @@
         event.key === " "
       ) {
         event.preventDefault();
-        sendTopCardToBack(event.currentTarget, 1);
+        sendTopCardToBack(card, 1);
       }
     }
 
     stack.addEventListener("pointerdown", (event) => {
       const card = event.target.closest(".stack-card");
-      if (card) onPointerDown.call(card, event);
+      if (card) onPointerDown(event, card);
     });
 
     stack.addEventListener("pointermove", onPointerMove);
@@ -361,7 +360,7 @@
 
     stack.addEventListener("keydown", (event) => {
       const card = event.target.closest(".stack-card");
-      if (card) onKeyDown.call(card, event);
+      if (card) onKeyDown(event, card);
     });
 
     createCards();
